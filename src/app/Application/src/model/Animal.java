@@ -86,4 +86,18 @@ public class Animal {
     public void setBreed(String breed) {
         this.breed = breed;
     }
+
+    @Override
+    public String toString()
+    {
+        return "ID " + animal_id +
+                ", imię = " + name +
+                ", płeć = " + sex +
+                ", data urodzenia = " + birth_date +
+                ", gatunek = " + species +
+                ", rasa = " + breed +
+                ", kolor = " + color +
+                ", sierść = " + fur +
+                ", ID właściciela =" + owner_id;
+    }
 }

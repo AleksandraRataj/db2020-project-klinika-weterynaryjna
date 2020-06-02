@@ -26,7 +26,7 @@ public class Main {
                     "1. Właściciel. \n" +
                     "2. Weterynarz. \n" +
                     "3. Administrator. \n" +
-                    "4. Wyjście. \n");
+                    "0. Wyjście. \n");
 
             System.out.print("Podaj swój wybór: ");
             int wybor = scan.nextInt();
@@ -35,7 +35,29 @@ public class Main {
             switch (wybor) {
                 case 1:
                     System.out.println("Właściciel\n");
-                    break;
+                    System.out.println("Podaj dane do logowania: ");
+                    System.out.print("Imie: ");
+                    String ownerName = scan.next();
+                    System.out.print("Naziwsko: ");
+                    String ownerSurname = scan.next();
+                    System.out.print("Numer telefonu: ");
+                    int phoneNumber = scan.nextInt();
+
+                    boolean isCorrect = false;
+                    List<Owner> owners = datasource.queryOwner(3);
+                    for(Owner owner: owners) {
+                        if(owner.getFirst_name().equals(ownerName) && owner.getLast_name().equals(ownerSurname) && (owner.getPhone_number() == phoneNumber)) {
+                            isCorrect = true;
+                        }
+                    }
+
+                    if(isCorrect) {
+                        Main.functionOwner(ownerName,ownerSurname);
+                    } else {
+                        System.out.println("Podano nieprawidłowe dane!");
+                    }
+
+                     break;
                 case 2:
                     System.out.println("Weterynarz\n");
                     break;
@@ -43,12 +65,76 @@ public class Main {
                     System.out.println("Administrator\n");
                     Main.functionAdmin();
                     break;
-                case 4:
+                case 0:
                     System.out.println("Wyjście\n");
                     run = false;
                     break;
                 default:
                     System.out.println("Nieprawidłowy wybór!\n");
+                    break;
+            }
+        }
+    }
+
+    public static void functionOwner(String ownerFirstName, String ownerLastName) {
+
+        while (true)
+        {
+            System.out.println("\nOpcje Właściciela: \n" +
+                    "1. Wypisanie wszsytkich zwierząt właściciela. \n" +
+                    "2. Wypisanie informacji szczegółowych o zwierzęciu właściciela. \n" +
+                    "0. Wyjście. \n");
+
+            System.out.print("Podaj swój wybór: ");
+
+            int wybor = -1;
+            try {
+                wybor = scan.nextInt();
+                scan.nextLine();
+            } catch (InputMismatchException e) {
+                System.out.println("\nPodaj prawidłowy numer!!!\n");
+                scan.next();
+            }
+
+            switch (wybor) {
+                case 1:
+                    System.out.println("\nWypisanie wszsytkich zwierząt właściciela: \n");
+
+                    List<Animal> animalList = datasource.queryAnimalsByOwner(ownerFirstName, ownerLastName, 3);
+                    if(animalList == null){
+                        System.out.println("Nie udało się odnaleźć zwierząt dla właściciela: " + ownerFirstName + " " + ownerLastName);
+                        return;
+                    }
+
+                    for(Animal animal : animalList){
+                        System.out.println(animal.getName() + "\t" + animal.getSex() + "\t" + animal.getBirth_date() + "\t" +
+                                animal.getSpecies());
+                    }
+
+                    break;
+
+                case 2:
+                    System.out.println("\nWypisanie informacji szczegółowych o zwierzęciu właściciela: \n");
+
+                    String animalName;
+
+                    try {
+                        System.out.print("Imię zwierzęcia: ");
+                        animalName = scan.nextLine();
+                    } catch (InputMismatchException e) {
+                        System.out.println("\nPodano nieprawidłowe dane!");
+                        break;
+                    }
+
+                    Animal animal = datasource.queryAnimalInformation(ownerFirstName,ownerLastName,animalName);
+                    System.out.println(animal.toString());
+
+                    break;
+
+                case 0:
+                    return;
+
+                default:
                     break;
             }
         }
@@ -227,7 +313,7 @@ public class Main {
                     break;
 
                 case 7:
-                    System.out.println("\nWypisanie informacji szczegółowych o zwierzęciu właściciela, na podstawie imienia i nazwiska właściciela oraz i imienia zwierzęcia: \n");
+                    System.out.println("\nWypisanie informacji szczegółowych o zwierzęciu właściciela, na podstawie imienia i nazwiska właściciela oraz imienia zwierzęcia: \n");
 
                     String firstName;
                     String lastName;
@@ -246,16 +332,7 @@ public class Main {
                     }
 
                     Animal animal = datasource.queryAnimalInformation(firstName,lastName,animalName);
-                    System.out.println(
-                        "ID: " + animal.getAnimal_id() +
-                        " Imię: " + animal.getName() +
-                        " Płeć: " + animal.getSex() +
-                        " Data urodzenia: " + animal.getBirth_date() +
-                        " Gatunek: " + animal.getSpecies() +
-                        " Rasa: " + animal.getBreed() +
-                        " Kolor: " + animal.getColor() +
-                        " Futro: " + animal.getFur() +
-                        " ID właściciela: " + animal.getOwner_id());
+                    System.out.println(animal.toString());
 
                     break;
 
