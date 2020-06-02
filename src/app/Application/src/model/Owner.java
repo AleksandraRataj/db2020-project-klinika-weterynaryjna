@@ -50,10 +50,10 @@ public class Owner {
     public String toString()
     {
         return "Właściciel" +
-                "id=" + owner_id +
-                ", imie='" + first_name + '\'' +
-                ", naziwsko='" + last_name + '\'' +
-                ", adres='" + address + '\'' +
-                ", numer telefonu=" + phone_number;
+                "id = " + owner_id +
+                ", imie = '" + first_name + '\'' +
+                ", naziwsko = '" + last_name + '\'' +
+                ", adres = '" + address + '\'' +
+                ", numer telefonu = " + phone_number;
     }
 }

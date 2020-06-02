@@ -7,7 +7,7 @@ public class AppointmentForOwner {
 
     private String first_name;
     private String last_name;
-    private String anmial;
+    private String animal;
     private Date date;
     private Time time;
 
@@ -27,12 +27,12 @@ public class AppointmentForOwner {
         this.last_name = last_name;
     }
 
-    public String getAnmial() {
-        return anmial;
+    public String getAnimal() {
+        return animal;
     }
 
-    public void setAnmial(String anmial) {
-        this.anmial = anmial;
+    public void setAnimal(String animal) {
+        this.animal = animal;
     }
 
     public Date getDate() {
@@ -53,7 +53,7 @@ public class AppointmentForOwner {
 
     @Override
     public String toString() {
-        return "Imie: " + this.getFirst_name() + " Naziwsko: " + this.getLast_name() +
-                " Zwierze: " + this.getAnmial() + " Data: " + this.getDate() + " Godzina: " + this.getTime();
+        return "Imię: " + this.getFirst_name() + " Nazwisko: " + this.getLast_name() +
+                " Zwierzę: " + this.getAnimal() + " Data: " + this.getDate() + " Godzina: " + this.getTime();
     }
 }

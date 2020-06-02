@@ -103,8 +103,9 @@ public class Datasource {
             " WHERE " + TABLE_OWNER  + "." + COLUMN_OWNER_LAST_NAME + " = \"";
 
     public static final String QUERY_DIAGNOSIS_FOR_ANIMAL = "SELECT " + TABLE_ANIMAL + "." + COLUMN_ANIMAL_NAME + "," + TABLE_APPOINTMENT + "." + COLUMN_APPOINTMENT_DATA + "," +
-            "diagnosis.name, diagnosis.description FROM " + TABLE_ANIMAL + " INNER JOIN " + TABLE_APPOINTMENT + " ON " + TABLE_ANIMAL + "." + COLUMN_ANIMAL_ID + " = " + TABLE_APPOINTMENT + "." + COLUMN_APPOINTMENT_ANIMAL_ID +
-            " INNER JOIN animal_diagnosis ON " + TABLE_ANIMAL + "." + COLUMN_ANIMAL_ID + " = animal_diagnosis.animal_diagnosis_id " +
+            "diagnosis.name, diagnosis.description, animal_diagnosis.regimen FROM " + TABLE_ANIMAL + " INNER JOIN " + TABLE_APPOINTMENT + " ON "
+            + TABLE_ANIMAL + "." + COLUMN_ANIMAL_ID + " = " + TABLE_APPOINTMENT + "." + COLUMN_APPOINTMENT_ANIMAL_ID +
+            " INNER JOIN animal_diagnosis ON animal_diagnosis.appointment_id = appointment.appointment_id " +
             "INNER JOIN diagnosis ON animal_diagnosis.animal_diagnosis_id = diagnosis.diagnosis_id " +
             "WHERE " + TABLE_ANIMAL + "." + COLUMN_ANIMAL_NAME + " = \"";
 
@@ -613,7 +614,7 @@ public class Datasource {
                 AppointmentForOwner appointmentForOwner = new AppointmentForOwner();
                 appointmentForOwner.setFirst_name(resultSet.getString(1));
                 appointmentForOwner.setLast_name(resultSet.getString(2));
-                appointmentForOwner.setAnmial(resultSet.getString(3));
+                appointmentForOwner.setAnimal(resultSet.getString(3));
                 appointmentForOwner.setDate(resultSet.getDate(4));
                 appointmentForOwner.setTime(resultSet.getTime(5));
 
@@ -645,6 +646,7 @@ public class Datasource {
                 diagnosisForAnimal.setData(resultSet.getDate(2));
                 diagnosisForAnimal.setDiagnosis_name(resultSet.getString(3));
                 diagnosisForAnimal.setDescription(resultSet.getString(4));
+                diagnosisForAnimal.setRegimen(resultSet.getString(5));
 
                 diagnosisForAnimals.add(diagnosisForAnimal);
             }

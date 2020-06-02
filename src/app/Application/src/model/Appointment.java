@@ -50,4 +50,10 @@ public class Appointment {
     public void setAnimal_id(int animal_id) {
         this.animal_id = animal_id;
     }
+
+    @Override
+    public String toString() {
+        return "ID = " + this.getAppointment_id() + ", Data = " + this.getData() + ", Godzina: " + this.getTime() +
+                ", ID zwierzęcia = " + this.getAnimal_id() + ", ID weterynarza = " + this.getVeterinarian_id();
+    }
 }

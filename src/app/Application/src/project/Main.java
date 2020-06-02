@@ -4,7 +4,6 @@ import model.*;
 
 import java.sql.Date;
 import java.sql.Time;
-import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
@@ -34,7 +33,9 @@ public class Main {
             System.out.println();
 
             switch (wybor) {
+
                 case 1:
+
                     System.out.println("Właściciel\n");
                     System.out.println("Podaj dane do logowania: ");
                     System.out.print("Imie: ");
@@ -46,32 +47,57 @@ public class Main {
 
                     boolean isCorrect = false;
                     List<Owner> owners = datasource.queryOwner(3);
-                    for(Owner owner: owners) {
-                        if(owner.getFirst_name().equals(ownerName) && owner.getLast_name().equals(ownerSurname) && (owner.getPhone_number() == phoneNumber)) {
+                    for (Owner owner : owners) {
+                        if (owner.getFirst_name().equals(ownerName) && owner.getLast_name().equals(ownerSurname) && (owner.getPhone_number() == phoneNumber)) {
                             isCorrect = true;
                         }
                     }
 
-                    if(isCorrect) {
-                        Main.functionOwner(ownerName,ownerSurname);
+                    if (isCorrect) {
+                        Main.functionOwner(ownerName, ownerSurname);
                     } else {
                         System.out.println("Podano nieprawidłowe dane!");
                     }
 
-                     break;
-                case 2:
-                    System.out.println("Weterynarz\n");
                     break;
-                case 3:
-                    System.out.println("Administrator\n");
 
+                case 2:
+
+                    System.out.println("Weterynarz\n");
+                    System.out.println("Podaj dane do logowania: ");
+                    System.out.print("Imie: ");
+                    String vetName = scan.next();
+                    System.out.print("Nazwisko: ");
+                    String vetSurname = scan.next();
+                    System.out.print("Numer telefonu: ");
+                    int vetPhoneNumber = scan.nextInt();
+
+                    isCorrect = false;
+                    List<Veterinarian> veterinarians = datasource.queryVeterinarian(3);
+                    for (Veterinarian veterinarian : veterinarians) {
+                        if (veterinarian.getFirst_name().equals(vetName) && veterinarian.getLast_name().equals(vetSurname) && (veterinarian.getPhone_number() == vetPhoneNumber)) {
+                            isCorrect = true;
+                        }
+                    }
+
+                    if (isCorrect) {
+                        Main.functionVet(vetName, vetSurname);
+                    } else {
+                        System.out.println("Podano nieprawidłowe dane!");
+                    }
+
+                    break;
+
+                case 3:
+
+                    System.out.println("Administrator\n");
                     System.out.println("Podaj dane do logowania: ");
                     System.out.print("Login: ");
                     String adminLogin = scan.next();
                     System.out.print("Haslo: ");
                     String adminPassword = scan.next();
 
-                    if(adminLogin.equals("admin") && adminPassword.equals("admin")) {
+                    if (adminLogin.equals("admin") && adminPassword.equals("admin")) {
                         System.out.println("Udało się zalogować!");
                         Main.functionAdmin();
                     } else {
@@ -95,8 +121,7 @@ public class Main {
         List<AppointmentForOwner> ownerAppointments = datasource.queryAppointmentForOwner(ownerLastName);
         List<Animal> ownerAnimals = datasource.queryAnimalsByOwner(ownerFirstName, ownerLastName, 3);
 
-        while (true)
-        {
+        while (true) {
             System.out.println("\nOpcje Właściciela: \n" +
                     "1. Wypisanie wszsytkich zwierząt właściciela. \n" +
                     "2. Wypisanie informacji szczegółowych o zwierzęciu właściciela. \n" +
@@ -119,12 +144,12 @@ public class Main {
                 case 1:
                     System.out.println("\nWypisanie wszsytkich zwierząt właściciela: \n");
 
-                    if(ownerAnimals == null){
+                    if (ownerAnimals == null) {
                         System.out.println("Nie udało się odnaleźć zwierząt dla właściciela: " + ownerFirstName + " " + ownerLastName);
                         return;
                     }
 
-                    for(Animal animal : ownerAnimals){
+                    for (Animal animal : ownerAnimals) {
                         System.out.println(animal.getName() + "\t" + animal.getSex() + "\t" + animal.getBirth_date() + "\t" +
                                 animal.getSpecies());
                     }
@@ -144,11 +169,12 @@ public class Main {
                         break;
                     }
 
-                    Animal animal = datasource.queryAnimalInformation(ownerFirstName,ownerLastName,animalName);
-                    if(animal.getAnimal_id() != 0) {
+                    Animal animal = datasource.queryAnimalInformation(ownerFirstName, ownerLastName, animalName);
+                    if (animal.getAnimal_id() != 0) {
                         System.out.println(animal.toString());
                     } else {
-                        System.out.println(ownerFirstName + " " + ownerLastName + " nie posiada zwierzęcia o takim imieniu!");
+                        System.out.println(ownerFirstName + " " + ownerLastName + " nie posiada zwierzęcia o takim " +
+                                "imieniu!");
                     }
                     break;
 
@@ -156,7 +182,7 @@ public class Main {
                     System.out.println("\nWypisanie wszystkich wizyt dla właściciela: \n");
 
                     System.out.println("\nWszystkie wizyty dla właściciela: ");
-                    for(AppointmentForOwner appointmentForOwner : ownerAppointments) {
+                    for (AppointmentForOwner appointmentForOwner : ownerAppointments) {
                         System.out.println(appointmentForOwner.toString());
                     }
                     break;
@@ -172,17 +198,19 @@ public class Main {
                         break;
                     }
 
-                    Animal animalDiagnosis = datasource.queryAnimalInformation(ownerFirstName,ownerLastName,animalName);
-                    if(animalDiagnosis.getAnimal_id() != 0) {
+                    Animal animalDiagnosis = datasource.queryAnimalInformation(ownerFirstName, ownerLastName,
+                            animalName);
+                    if (animalDiagnosis.getAnimal_id() != 0) {
 
                         System.out.println("\nWszystkie diagnozy dla zwierzęcia o imieniu " + animalName + ":");
                         List<DiagnosisForAnimal> diagnosisForAnimals = datasource.queryDiagnosisForAnimal(animalName);
-                        for(DiagnosisForAnimal diagnosisForAnimal : diagnosisForAnimals) {
+                        for (DiagnosisForAnimal diagnosisForAnimal : diagnosisForAnimals) {
                             System.out.println(diagnosisForAnimal.toString());
                         }
 
                     } else {
-                        System.out.println(ownerFirstName + " " + ownerLastName + " nie posiada zwierzęcia o takim imieniu!");
+                        System.out.println(ownerFirstName + " " + ownerLastName + " nie posiada zwierzęcia o takim " +
+                                "imieniu!");
                     }
                     break;
 
@@ -191,6 +219,180 @@ public class Main {
 
                 default:
                     break;
+            }
+        }
+    }
+
+    public static void functionVet(String vetFirstName, String vetLastName) {
+
+        while (true) {
+            System.out.println("\nOpcje Weterynarza: \n" +
+                    "1. Wypisanie informacji szczegółowych o zwierzęciu, na podstawie imienia i nazwiska właściciela " +
+                    "oraz imienia zwierzęcia.\n" +
+                    "2. Wypisanie wizyt na dany dzień dla weterynarza na podstawie imienia oraz nazwiska.\n" +
+                    "3. Dodanie diagnozy do zwierzęcia przez weterynarza.\n" +
+                    "4. Wypisanie diagnoz dla zwierzęcia.\n" +
+                    "5. Dodanie leku do recepty.\n" +
+                    "0. Wyjście.\n"
+            );
+
+            System.out.print("Podaj swój wybór: ");
+
+            int wybor = -1;
+            try {
+                wybor = scan.nextInt();
+                scan.nextLine();
+            } catch (InputMismatchException e) {
+                System.out.println("\nPodaj prawidłowy numer!!!\n");
+                scan.next();
+            }
+
+            switch (wybor) {
+
+                case 1:
+
+                    System.out.println("\nWypisanie informacji szczegółowych o zwierzęciu właściciela, na podstawie " +
+                            "imienia i nazwiska właściciela oraz imienia zwierzęcia: \n");
+
+                    String firstName;
+                    String lastName;
+                    String animalName;
+
+                    try {
+                        System.out.print("Imię: ");
+                        firstName = scan.nextLine();
+                        System.out.print("Nazwisko: ");
+                        lastName = scan.nextLine();
+                        System.out.print("Imię zwierzęcia: ");
+                        animalName = scan.nextLine();
+                    } catch (InputMismatchException e) {
+                        System.out.println("\nPodano nieprawidłowe dane!");
+                        break;
+                    }
+
+                    Animal animal = datasource.queryAnimalInformation(firstName, lastName, animalName);
+                    System.out.println(animal.toString());
+
+                    break;
+
+                case 2:
+
+                    System.out.println("\nWypisanie wizyt na dany dzień dla weterynarza na podstawie imienia oraz " +
+                            "nazwiska: \n");
+
+                    Date date;
+
+                    try {
+                        System.out.print("Imię: ");
+                        vetFirstName = scan.nextLine();
+                        System.out.print("Nazwisko: ");
+                        vetLastName = scan.nextLine();
+                        System.out.println("Sprawdzana data: ");
+                        System.out.print("Dzień: ");
+                        int day = scan.nextInt();
+                        System.out.print("Miesiac: ");
+                        int month = scan.nextInt();
+                        System.out.print("Rok: ");
+                        int year = scan.nextInt();
+                        date = new Date(year - 1900, month - 1, day);
+                    } catch (InputMismatchException e) {
+                        System.out.println("\nPodano nieprawidłowe dane!");
+                        break;
+                    }
+
+                    System.out.println("Wizyty dla weterynarza: " + vetFirstName + " " + vetLastName + " w dniu " + date + ":");
+                    List<AppointmentForVeterinarian> appointmentForVeterinarians =
+                            datasource.queryAppointmentForVeterinarian(vetFirstName, vetLastName, date);
+                    for (AppointmentForVeterinarian appointmentForVeterinarian : appointmentForVeterinarians) {
+                        System.out.println(appointmentForVeterinarian.toString());
+                    }
+
+                    if (appointmentForVeterinarians.isEmpty()) {
+                        System.out.println("Brak wizyt!");
+                    }
+
+                    break;
+
+                case 3:
+
+                    System.out.println("\nDodanie diagnozy do zwierzęcia przez weterynarza: \n");
+
+                    String regimen;
+                    int appointID;
+                    int diagnosisID;
+
+                    try {
+                        System.out.print("Podaj opis diagnozy: ");
+                        regimen = scan.nextLine();
+                        System.out.print("Podaj ID wizyty: ");
+                        appointID = scan.nextInt();
+                        System.out.print("Podaj ID diagnozy: ");
+                        diagnosisID = scan.nextInt();
+
+
+                    } catch (InputMismatchException e) {
+                        System.out.println("\nPodano nieprawidłowe dane!");
+                        break;
+                    }
+
+                    datasource.insertAnimalDiagnosis(regimen, appointID, diagnosisID);
+                    break;
+
+                case 4:
+
+                    System.out.println("\nWypisanie diagnoz dla zwierzęcia: \n");
+
+                    String aniName;
+
+                    try {
+                        System.out.print("Podaj imie zwierzęcia: ");
+                        aniName = scan.nextLine();
+                    } catch (InputMismatchException e) {
+                        System.out.println("\nPodano nieprawidłowe dane!");
+                        break;
+                    }
+
+                    System.out.println("\nWszystkie diagnozy dla zwierzęcia o imieniu " + aniName + ":");
+                    List<DiagnosisForAnimal> diagnosisForAnimals = datasource.queryDiagnosisForAnimal(aniName);
+                    for (DiagnosisForAnimal diagnosisForAnimal : diagnosisForAnimals) {
+                        System.out.println(diagnosisForAnimal.toString());
+                    }
+
+                    break;
+
+                case 5:
+
+                    System.out.println("\n Dodanie leku do recepty: \n");
+
+                    String drugDes;
+                    int drugID;
+                    int diagID;
+
+                    try {
+                        System.out.print("Podaj opis stosowania leku: ");
+                        drugDes = scan.nextLine();
+                        System.out.print("Podaj ID diagnozy: ");
+                        diagID = scan.nextInt();
+                        System.out.print("Podaj ID leku: ");
+                        drugID = scan.nextInt();
+
+                    } catch (InputMismatchException e) {
+                        System.out.println("\nPodano nieprawidłowe dane!");
+                        break;
+                    }
+
+                    datasource.insertDrugPlan(diagID, drugDes, drugID);
+
+                    break;
+
+                case 0:
+
+                    System.out.println("Wyjśćie.\n");
+                    return;
+
+                default:
+                    break;
+
             }
         }
     }
@@ -205,15 +407,9 @@ public class Main {
                     "4. Wypisanie wszystkich zwierząt. \n" +
                     "5. Dodanie nowego zwierzęcia dla danego właściciela. \n" +
                     "6. Usunięcie danego zwierzęcia wybranego właściciela. \n" +
-                    "7. Wypisanie wszystkich zwierząt właściciela, na podstawie imienia oraz nazwiska właściciela. \n" +
-                    "8. Wypisanie informacji szczegółowych o zwierzęciu właściciela, na podstawie imienia i nazwiska właściciela oraz i imienia zwierzęcia. \n" +
-                    "9. Dodanie wizyty dla danego zwierzęcia. \n" +
-                    "10. Edycja wizyty. \n" +
-                    "11. Wypisanie wszystkich wizyt dla danego właściciela, na podstawie imienia oraz nazwiska właściciela. \n" +
-                    "12. Wypisanie diagnoz dla zwierzęcia. \n" +
-                    "13. Wypisanie wizyt na dany dzień dla weterynarza na podstawie imienia oraz nazwiska. \n" +
-                    "14. Dodanie diagnozy do zwierzęcia przez weterynarza. \n" +
-                    "15. Dodanie leku do recepty. \n" +
+                    "7. Wypisanie wszystkich wizyt.\n" +
+                    "8. Dodanie wizyty. \n" +
+                    "9. Edycja wizyty. \n" +
                     "0. Wyjście.");
 
             System.out.print("Podaj swój wybór: ");
@@ -222,7 +418,7 @@ public class Main {
             try {
                 wybor = scan.nextInt();
                 scan.nextLine();
-            } catch (InputMismatchException e){
+            } catch (InputMismatchException e) {
                 System.out.println("\nPodaj prawidłowy numer!!!\n");
                 scan.next();
             }
@@ -267,7 +463,7 @@ public class Main {
                         int number = scan.nextInt();
                         scan.nextLine();
 
-                        datasource.insertOwner(nameToAdd,surnameToAdd,addressToAdd,number);
+                        datasource.insertOwner(nameToAdd, surnameToAdd, addressToAdd, number);
                         break;
                     } catch (InputMismatchException e) {
                         System.out.println("\nPodano nieprawidłowe dane!");
@@ -355,59 +551,24 @@ public class Main {
                     }
 
                 case 7:
-                    System.out.println("\nWypisywanie zwierząt danego właściciela:\n");
 
-                    String ownerFirstName;
-                    String ownerLastName;
+                    System.out.println("\nWypisanie wszystkich wizyt: ");
 
-                    try {
-                        System.out.print("Imię: ");
-                        ownerFirstName = scan.nextLine();
-                        System.out.print("Nazwisko: ");
-                        ownerLastName = scan.nextLine();
-                    } catch (InputMismatchException e) {
-                        System.out.println("\nPodano nieprawidłowe dane!");
-                        break;
-                    }
+                    List<Appointment> appointments = datasource.queryAppointment(1);
 
-                    List<Animal> animalList = datasource.queryAnimalsByOwner(ownerFirstName, ownerLastName, 3);
-                    if(animalList == null){
-                        System.out.println("Nie udało się odnaleźć zwierząt dla tego właściciela");
+                    if (appointments == null) {
+                        System.out.println("No appointments!");
                         return;
                     }
 
-                    for(Animal animal : animalList){
-                        System.out.println(animal.getName() + "\t" + animal.getSex() + "\t" + animal.getBirth_date() + "\t" +
-                        animal.getSpecies());
+                    for (Appointment appointment : appointments) {
+                        System.out.println(appointment.toString());
                     }
 
                     break;
 
                 case 8:
-                    System.out.println("\nWypisanie informacji szczegółowych o zwierzęciu właściciela, na podstawie imienia i nazwiska właściciela oraz imienia zwierzęcia: \n");
 
-                    String firstName;
-                    String lastName;
-                    String animalName;
-
-                    try {
-                        System.out.print("Imię: ");
-                        firstName = scan.nextLine();
-                        System.out.print("Nazwisko: ");
-                        lastName = scan.nextLine();
-                        System.out.print("Imię zwierzęcia: ");
-                        animalName = scan.nextLine();
-                    } catch (InputMismatchException e) {
-                        System.out.println("\nPodano nieprawidłowe dane!");
-                        break;
-                    }
-
-                    Animal animal = datasource.queryAnimalInformation(firstName,lastName,animalName);
-                    System.out.println(animal.toString());
-
-                    break;
-
-                case 9:
                     System.out.println("\nDodanie wizyty dla danego zwierzęcia: \n");
 
                     try {
@@ -422,19 +583,21 @@ public class Main {
                         System.out.println("Podaj godzine: ");
                         System.out.print("Godzina: ");
                         int hourAp = scan.nextInt();
-                        Time timeAp = new Time(hourAp + 1, 0 , 0 );
+                        Time timeAp = new Time(hourAp + 1, 0, 0);
                         System.out.print("ID weterynarza: ");
                         int vetID = scan.nextInt();
                         System.out.print("ID zwierzęcia: ");
                         int animalID = scan.nextInt();
 
-                        datasource.insertAppointment(dateAp,timeAp,vetID,animalID);
+                        datasource.insertAppointment(dateAp, timeAp, vetID, animalID);
                         break;
                     } catch (InputMismatchException e) {
                         System.out.println("\nPodano nieprawidłowe dane!");
                         break;
                     }
-                case 10:
+
+                case 9:
+
                     System.out.println("\nEdycja wizyty: \n");
 
                     try {
@@ -449,7 +612,7 @@ public class Main {
                         System.out.println("Podaj godzine wizyty którą chcesz zmienić: ");
                         System.out.print("Godzina: ");
                         int oldHour = scan.nextInt();
-                        Time oldTime = new Time(oldHour + 1, 0 , 0 );
+                        Time oldTime = new Time(oldHour + 1, 0, 0);
 
                         System.out.println("Podaj nową date: ");
                         System.out.print("Dzień: ");
@@ -462,139 +625,22 @@ public class Main {
                         System.out.println("Podaj nową godzin: ");
                         System.out.print("Godzina: ");
                         int newHour = scan.nextInt();
-                        Time newTime = new Time(newHour + 1, 0 , 0 );
+                        Time newTime = new Time(newHour + 1, 0, 0);
 
-                        datasource.updateAppointment(newDate,newTime,oldDate,oldTime);
+                        datasource.updateAppointment(newDate, newTime, oldDate, oldTime);
                         break;
                     } catch (InputMismatchException e) {
                         System.out.println("\nPodano nieprawidłowe dane!");
                         break;
                     }
-                case 11:
-                    System.out.println("\nWypisanie wszystkich wizyt dla danego właściciela, na podstawie imienia oraz nazwiska właściciela: \n");
-
-                    String surname;
-
-                    try {
-                        System.out.print("Podaj nawzisko: ");
-                        surname = scan.nextLine();
-                    } catch (InputMismatchException e) {
-                        System.out.println("\nPodano nieprawidłowe dane!");
-                        break;
-                    }
-
-                    System.out.println("\nWszystkie wizyty dla właściciela o nazwisku " + surname + ":");
-                    List<AppointmentForOwner> appointmentForOwnerList = datasource.queryAppointmentForOwner(surname);
-                    for(AppointmentForOwner appointmentForOwner : appointmentForOwnerList) {
-                        System.out.println(appointmentForOwner.toString());
-                    }
-                    break;
-
-                case 12:
-                    System.out.println("\nWypisanie diagnoz dla zwierzęcia: \n");
-
-                    String aniName;
-
-                    try {
-                        System.out.print("Podaj imie zwierzęcia: ");
-                        aniName = scan.nextLine();
-                    } catch (InputMismatchException e) {
-                        System.out.println("\nPodano nieprawidłowe dane!");
-                        break;
-                    }
-
-                    System.out.println("\nWszystkie diagnozy dla zwierzęcia o imieniu " + aniName + ":");
-                    List<DiagnosisForAnimal> diagnosisForAnimals = datasource.queryDiagnosisForAnimal(aniName);
-                    for(DiagnosisForAnimal diagnosisForAnimal : diagnosisForAnimals) {
-                        System.out.println(diagnosisForAnimal.toString());
-                    }
-
-                    break;
-
-                case 13:
-                    System.out.println("\nWypisanie wizyt na dany dzień dla weterynarza na podstawie imienia oraz nazwiska: \n");
-
-                    String vetFirstName;
-                    String vetLastName;
-                    Date date;
-
-                    try {
-                        System.out.print("Imię: ");
-                        vetFirstName = scan.nextLine();
-                        System.out.print("Nazwisko: ");
-                        vetLastName = scan.nextLine();
-                        System.out.println("Sprawdzana data: ");
-                        System.out.print("Dzień: ");
-                        int day = scan.nextInt();
-                        System.out.print("Miesiac: ");
-                        int month = scan.nextInt();
-                        System.out.print("Rok: ");
-                        int year = scan.nextInt();
-                        date = new Date(year - 1900, month - 1, day);
-                    } catch (InputMismatchException e) {
-                        System.out.println("\nPodano nieprawidłowe dane!");
-                        break;
-                    }
-
-                    System.out.println("Wizyty dla weterynarza: " + vetFirstName + " " + vetLastName + " w dniu " + date + ":");
-                    List<AppointmentForVeterinarian> appointmentForVeterinarians = datasource.queryAppointmentForVeterinarian(vetFirstName,vetLastName,date);
-                    for(AppointmentForVeterinarian appointmentForVeterinarian : appointmentForVeterinarians) {
-                        System.out.println(appointmentForVeterinarian.toString());
-                    }
-
-                    break;
-
-                case 14:
-                    System.out.println("\nDodanie diagnozy do zwierzęcia przez weterynarza: \n");
-
-                    String regimen;
-                    int appointID;
-                    int diagnosisID;
-
-                    try {
-                        System.out.print("Podaj opis diagnozy: ");
-                        regimen = scan.nextLine();
-                        System.out.print("Podaj ID wizyty: ");
-                        appointID = scan.nextInt();
-                        System.out.print("Podaj ID diagnozy: ");
-                        diagnosisID = scan.nextInt();
-
-
-                    } catch (InputMismatchException e) {
-                        System.out.println("\nPodano nieprawidłowe dane!");
-                        break;
-                    }
-
-                    datasource.insertAnimalDiagnosis(regimen, appointID, diagnosisID);
-                    break;
-
-                case 15:
-                    System.out.println("\n Dodanie leku do recepty: \n");
-
-                    String drugDes;
-                    int drugID;
-                    int diagID;
-
-                    try {
-                        System.out.print("Podaj opis stosowania leku: ");
-                        drugDes = scan.nextLine();
-                        System.out.print("Podaj ID diagnozy: ");
-                        diagID = scan.nextInt();
-                        System.out.print("Podaj ID leku: ");
-                        drugID = scan.nextInt();
-
-                    } catch (InputMismatchException e) {
-                        System.out.println("\nPodano nieprawidłowe dane!");
-                        break;
-                    }
-
-                    datasource.insertDrugPlan(diagID, drugDes, drugID);
-                    break;
 
                 case 0:
-                    System.out.println("Wyjśćie.\n");
+
+                    System.out.println("Wyjście.\n");
                     return;
+
                 default:
+
                     break;
             }
         }

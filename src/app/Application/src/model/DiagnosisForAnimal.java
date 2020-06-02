@@ -8,6 +8,7 @@ public class DiagnosisForAnimal {
     private Date data;
     private String diagnosis_name;
     private String description;
+    private String regimen;
 
     public String getAnimal_name() {
         return animal_name;
@@ -41,9 +42,17 @@ public class DiagnosisForAnimal {
         this.description = description;
     }
 
+    public String getRegimen() {
+        return regimen;
+    }
+
+    public void setRegimen(String regimen) {
+        this.regimen = regimen;
+    }
+
     @Override
     public String toString() {
-        return "Imie zwierzęcia: " + this.getAnimal_name() + " Data: " + this.getData() +
-                " Nazwa: " + this.getDiagnosis_name() + " Opis: " + this.getDescription();
+        return "Imię zwierzęcia: " + this.getAnimal_name() + "\nData: " + this.getData() +
+                "\nNazwa: " + this.getDiagnosis_name() + "\nOpis: " + this.getDescription() + "\nReżim: " + this.getRegimen();
     }
 }
