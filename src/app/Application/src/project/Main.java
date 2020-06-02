@@ -4,6 +4,7 @@ import model.*;
 
 import java.sql.Date;
 import java.sql.Time;
+import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
@@ -63,7 +64,20 @@ public class Main {
                     break;
                 case 3:
                     System.out.println("Administrator\n");
-                    Main.functionAdmin();
+
+                    System.out.println("Podaj dane do logowania: ");
+                    System.out.print("Login: ");
+                    String adminLogin = scan.next();
+                    System.out.print("Haslo: ");
+                    String adminPassword = scan.next();
+
+                    if(adminLogin.equals("admin") && adminPassword.equals("admin")) {
+                        System.out.println("Udało się zalogować!");
+                        Main.functionAdmin();
+                    } else {
+                        System.out.println("Podano nieprawidłowe dane!!!");
+                    }
+
                     break;
                 case 0:
                     System.out.println("Wyjście\n");
@@ -78,11 +92,16 @@ public class Main {
 
     public static void functionOwner(String ownerFirstName, String ownerLastName) {
 
+        List<AppointmentForOwner> ownerAppointments = datasource.queryAppointmentForOwner(ownerLastName);
+        List<Animal> ownerAnimals = datasource.queryAnimalsByOwner(ownerFirstName, ownerLastName, 3);
+
         while (true)
         {
             System.out.println("\nOpcje Właściciela: \n" +
                     "1. Wypisanie wszsytkich zwierząt właściciela. \n" +
                     "2. Wypisanie informacji szczegółowych o zwierzęciu właściciela. \n" +
+                    "3. Wypisanie wszystkich wizyt dla właściciela. \n" +
+                    "4. Wypisanie diagnoz dla wybranego zwierzęcia. \n" +
                     "0. Wyjście. \n");
 
             System.out.print("Podaj swój wybór: ");
@@ -100,13 +119,12 @@ public class Main {
                 case 1:
                     System.out.println("\nWypisanie wszsytkich zwierząt właściciela: \n");
 
-                    List<Animal> animalList = datasource.queryAnimalsByOwner(ownerFirstName, ownerLastName, 3);
-                    if(animalList == null){
+                    if(ownerAnimals == null){
                         System.out.println("Nie udało się odnaleźć zwierząt dla właściciela: " + ownerFirstName + " " + ownerLastName);
                         return;
                     }
 
-                    for(Animal animal : animalList){
+                    for(Animal animal : ownerAnimals){
                         System.out.println(animal.getName() + "\t" + animal.getSex() + "\t" + animal.getBirth_date() + "\t" +
                                 animal.getSpecies());
                     }
@@ -127,8 +145,45 @@ public class Main {
                     }
 
                     Animal animal = datasource.queryAnimalInformation(ownerFirstName,ownerLastName,animalName);
-                    System.out.println(animal.toString());
+                    if(animal.getAnimal_id() != 0) {
+                        System.out.println(animal.toString());
+                    } else {
+                        System.out.println(ownerFirstName + " " + ownerLastName + " nie posiada zwierzęcia o takim imieniu!");
+                    }
+                    break;
 
+                case 3:
+                    System.out.println("\nWypisanie wszystkich wizyt dla właściciela: \n");
+
+                    System.out.println("\nWszystkie wizyty dla właściciela: ");
+                    for(AppointmentForOwner appointmentForOwner : ownerAppointments) {
+                        System.out.println(appointmentForOwner.toString());
+                    }
+                    break;
+
+                case 4:
+                    System.out.println("\nWypisanie diagnoz dla wybranego zwierzęcia.: \n");
+
+                    try {
+                        System.out.print("Imię zwierzęcia: ");
+                        animalName = scan.nextLine();
+                    } catch (InputMismatchException e) {
+                        System.out.println("\nPodano nieprawidłowe dane!");
+                        break;
+                    }
+
+                    Animal animalDiagnosis = datasource.queryAnimalInformation(ownerFirstName,ownerLastName,animalName);
+                    if(animalDiagnosis.getAnimal_id() != 0) {
+
+                        System.out.println("\nWszystkie diagnozy dla zwierzęcia o imieniu " + animalName + ":");
+                        List<DiagnosisForAnimal> diagnosisForAnimals = datasource.queryDiagnosisForAnimal(animalName);
+                        for(DiagnosisForAnimal diagnosisForAnimal : diagnosisForAnimals) {
+                            System.out.println(diagnosisForAnimal.toString());
+                        }
+
+                    } else {
+                        System.out.println(ownerFirstName + " " + ownerLastName + " nie posiada zwierzęcia o takim imieniu!");
+                    }
                     break;
 
                 case 0:
@@ -147,17 +202,18 @@ public class Main {
                     "1. Wypisanie wszystkich właścicieli. \n" +
                     "2. Dodanie nowego właściciela zwierzęcia do bazy danych. \n" +
                     "3. Usunięcie właściciela zwierzęcia z bazy danych. \n" +
-                    "4. Dodanie nowego zwierzęcia dla danego właściciela. \n" +
-                    "5. Usunięcie danego zwierzęcia wybranego właściciela. \n" +
-                    "6. Wypisanie wszystkich zwierząt właściciela, na podstawie imienia oraz nazwiska właściciela. \n" +
-                    "7. Wypisanie informacji szczegółowych o zwierzęciu właściciela, na podstawie imienia i nazwiska właściciela oraz i imienia zwierzęcia. \n" +
-                    "8. Dodanie wizyty dla danego zwierzęcia. \n" +
-                    "9. Edycja wizyty. \n" +
-                    "10. Wypisanie wszystkich wizyt dla danego właściciela, na podstawie imienia oraz nazwiska właściciela. \n" +
-                    "11. Wypisanie diagnoz dla zwierzęcia. \n" +
-                    "12. Wypisanie wizyt na dany dzień dla weterynarza na podstawie imienia oraz nazwiska. \n" +
-                    "13. Dodanie diagnozy do zwierzęcia przez weterynarza. \n" +
-                    "14. Dodanie leku do recepty. \n" +
+                    "4. Wypisanie wszystkich zwierząt. \n" +
+                    "5. Dodanie nowego zwierzęcia dla danego właściciela. \n" +
+                    "6. Usunięcie danego zwierzęcia wybranego właściciela. \n" +
+                    "7. Wypisanie wszystkich zwierząt właściciela, na podstawie imienia oraz nazwiska właściciela. \n" +
+                    "8. Wypisanie informacji szczegółowych o zwierzęciu właściciela, na podstawie imienia i nazwiska właściciela oraz i imienia zwierzęcia. \n" +
+                    "9. Dodanie wizyty dla danego zwierzęcia. \n" +
+                    "10. Edycja wizyty. \n" +
+                    "11. Wypisanie wszystkich wizyt dla danego właściciela, na podstawie imienia oraz nazwiska właściciela. \n" +
+                    "12. Wypisanie diagnoz dla zwierzęcia. \n" +
+                    "13. Wypisanie wizyt na dany dzień dla weterynarza na podstawie imienia oraz nazwiska. \n" +
+                    "14. Dodanie diagnozy do zwierzęcia przez weterynarza. \n" +
+                    "15. Dodanie leku do recepty. \n" +
                     "0. Wyjście.");
 
             System.out.print("Podaj swój wybór: ");
@@ -176,7 +232,7 @@ public class Main {
                 case 1:
                     System.out.println("\nWypisanie wszystkich właścicieli: \n");
 
-                    List<Owner> owners = datasource.queryOwner(3);
+                    List<Owner> owners = datasource.queryOwner(2);
                     if (owners == null) {
                         System.out.println("No owners!");
                         return;
@@ -234,6 +290,21 @@ public class Main {
                     }
 
                 case 4:
+
+                    System.out.println("\nWypisanie wszystkich zwierząt: \n");
+
+                    List<Animal> animals = datasource.queryAnimal(2);
+                    if (animals == null) {
+                        System.out.println("Brak zwierząt!!!");
+                        return;
+                    }
+
+                    for (Animal animal : animals) {
+                        System.out.println(animal.toString());
+                    }
+                    break;
+
+                case 5:
                     System.out.println("\nDodanie nowego zwierzęcia dla danego właściciela:\n");
                     try {
                         System.out.print("Podaj imie: ");
@@ -267,7 +338,7 @@ public class Main {
                         break;
                     }
 
-                case 5:
+                case 6:
                     System.out.println("\nUsunięcie danego zwierzęcia wybranego właściciela:\n");
 
                     try {
@@ -283,7 +354,7 @@ public class Main {
                         break;
                     }
 
-                case 6:
+                case 7:
                     System.out.println("\nWypisywanie zwierząt danego właściciela:\n");
 
                     String ownerFirstName;
@@ -312,7 +383,7 @@ public class Main {
 
                     break;
 
-                case 7:
+                case 8:
                     System.out.println("\nWypisanie informacji szczegółowych o zwierzęciu właściciela, na podstawie imienia i nazwiska właściciela oraz imienia zwierzęcia: \n");
 
                     String firstName;
@@ -336,7 +407,7 @@ public class Main {
 
                     break;
 
-                case 8:
+                case 9:
                     System.out.println("\nDodanie wizyty dla danego zwierzęcia: \n");
 
                     try {
@@ -363,7 +434,7 @@ public class Main {
                         System.out.println("\nPodano nieprawidłowe dane!");
                         break;
                     }
-                case 9:
+                case 10:
                     System.out.println("\nEdycja wizyty: \n");
 
                     try {
@@ -399,7 +470,7 @@ public class Main {
                         System.out.println("\nPodano nieprawidłowe dane!");
                         break;
                     }
-                case 10:
+                case 11:
                     System.out.println("\nWypisanie wszystkich wizyt dla danego właściciela, na podstawie imienia oraz nazwiska właściciela: \n");
 
                     String surname;
@@ -419,7 +490,7 @@ public class Main {
                     }
                     break;
 
-                case 11:
+                case 12:
                     System.out.println("\nWypisanie diagnoz dla zwierzęcia: \n");
 
                     String aniName;
@@ -440,7 +511,7 @@ public class Main {
 
                     break;
 
-                case 12:
+                case 13:
                     System.out.println("\nWypisanie wizyt na dany dzień dla weterynarza na podstawie imienia oraz nazwiska: \n");
 
                     String vetFirstName;
@@ -473,7 +544,7 @@ public class Main {
 
                     break;
 
-                case 13:
+                case 14:
                     System.out.println("\nDodanie diagnozy do zwierzęcia przez weterynarza: \n");
 
                     String regimen;
@@ -497,7 +568,7 @@ public class Main {
                     datasource.insertAnimalDiagnosis(regimen, appointID, diagnosisID);
                     break;
 
-                case 14:
+                case 15:
                     System.out.println("\n Dodanie leku do recepty: \n");
 
                     String drugDes;
